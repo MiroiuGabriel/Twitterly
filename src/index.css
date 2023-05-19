@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: Chirp;
+	src: url('./fonts/chirp-extended-heavy-web.woff2');
+	font-weight: 900;
+}
+
+@font-face {
+	font-family: Chirp;
+	src: url('./fonts/Chirp-Bold.woff2');
+	font-weight: 700;
+}
+
+@font-face {
+	font-family: Chirp;
+	src: url('./fonts/Chirp-Medium.woff2');
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: Chirp;
+	src: url('./fonts/Chirp-Regular.woff2');
+}
+
+body {
+	@apply bg-black font-chirp;
+}
+
+@layer utilities {
+	.no-controls-fullscreen::-webkit-media-controls {
+		display: none !important;
+	}
+}
