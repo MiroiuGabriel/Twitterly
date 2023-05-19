@@ -13,6 +13,7 @@ export const useVideoControls = () => {
 	const ref = useRef<HTMLVideoElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const isDraggingRef = useRef(false);
+	const previousVolumeRef = useRef<number>(volume);
 
 	useEffectOnce(() => {
 		const onFullScreenChange = (ev: Event) => {
@@ -89,6 +90,17 @@ export const useVideoControls = () => {
 		setVolume(level);
 	};
 
+	const toggleVolume = () => {
+		if (volume > 0) {
+			previousVolumeRef.current = volume;
+			setVolumeLevel(0);
+		} else {
+			setVolumeLevel(
+				previousVolumeRef.current === 0 ? 1 : previousVolumeRef.current
+			);
+		}
+	};
+
 	const setIsDragging = (value: boolean) => (isDraggingRef.current = value);
 
 	return {
@@ -110,5 +122,6 @@ export const useVideoControls = () => {
 		setIsDragging,
 		isFullscreen,
 		wrapperRef,
+		toggleVolume,
 	};
 };

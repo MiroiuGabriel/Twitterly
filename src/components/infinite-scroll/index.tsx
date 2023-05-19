@@ -1,51 +1,62 @@
-import { Ref, useEffect, useState } from 'react';
-import { type SWRInfiniteResponse } from 'swr/infinite';
+import { useEffect } from 'react';
+import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
+import { Fetcher } from 'swr';
+import { useIntersection } from './useIntersection';
 
 type InfiniteScrollProps<T> = {
-	swr: SWRInfiniteResponse<T>;
-	children: React.ReactChild | ((item: T) => React.ReactNode);
+	children: (item: T[]) => React.ReactNode;
 	loadingIndicator?: React.ReactNode;
+	emptyIndicator?: React.ReactNode;
 	endingIndicator?: React.ReactNode;
-	isReachingEnd: boolean | ((swr: SWRInfiniteResponse<T>) => boolean);
+	validatingIndicator?: React.ReactNode;
+	getKey: SWRInfiniteKeyLoader;
+	isReachingEnd: boolean | ((data: T[][] | undefined) => boolean);
 	offset?: number;
-};
-
-const useIntersection = <T extends HTMLElement>(): [boolean, Ref<T>] => {
-	const [intersecting, setIntersecting] = useState<boolean>(false);
-	const [element, setElement] = useState<HTMLElement>();
-
-	useEffect(() => {
-		if (!element) return;
-		const observer = new IntersectionObserver(entries => {
-			setIntersecting(entries[0]?.isIntersecting);
-		});
-		observer.observe(element);
-		return () => observer.unobserve(element);
-	}, [element]);
-
-	return [intersecting, el => el && setElement(el)];
+	fetcher: Fetcher<T[], string>;
+	revalidateIfStale?: boolean;
+	revalidateOnFocus?: boolean;
+	revalidateOnReconnect?: boolean;
 };
 
 export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 	const {
-		swr,
-		swr: { setSize, data, isValidating },
 		children,
 		loadingIndicator,
 		endingIndicator,
+		emptyIndicator,
+		validatingIndicator,
 		isReachingEnd,
+		getKey,
+		fetcher,
 		offset = 0,
+		revalidateIfStale = true,
+		revalidateOnFocus = true,
+		revalidateOnReconnect = true,
 	} = props;
+
+	const { data, isLoading, isValidating, setSize } = useSWRInfinite<T[]>(
+		getKey,
+		{
+			fetcher: fetcher,
+			revalidateIfStale: revalidateIfStale,
+			revalidateOnFocus: revalidateOnFocus,
+			revalidateOnReconnect: revalidateOnReconnect,
+		}
+	);
 
 	const [intersecting, ref] = useIntersection<HTMLDivElement>();
 
 	const ending =
 		typeof isReachingEnd === 'function'
-			? isReachingEnd(swr)
+			? isReachingEnd(data)
 			: isReachingEnd;
 
+	const isEmpty = data?.[0]?.length === 0;
+
+	const validating = !isEmpty && !isLoading && isValidating;
+
 	useEffect(() => {
-		if (intersecting && !isValidating && !ending) {
+		if (intersecting && !isValidating && !ending && !isEmpty) {
 			setSize(size => size + 1);
 		}
 	}, [intersecting, isValidating, setSize, ending]);
@@ -56,10 +67,15 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 				? data?.map(item => children(item))
 				: children}
 			<div style={{ position: 'relative' }}>
-				<div ref={ref} style={{ position: 'absolute', top: offset }}>
-					{ending ? endingIndicator : loadingIndicator}
-				</div>
+				<div
+					ref={ref}
+					style={{ position: 'absolute', top: offset }}
+				></div>
 			</div>
+			{ending ? endingIndicator : null}
+			{isEmpty ? emptyIndicator : null}
+			{validating ? validatingIndicator : null}
+			{isLoading ? loadingIndicator : null}
 		</>
 	);
 };

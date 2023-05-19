@@ -1,8 +1,5 @@
 import TextareaAutosize from 'react-textarea-autosize';
-import {
-	CreateTweetContextProvider,
-	useCreateTweetStore,
-} from '../../../context';
+import { CreateTweetContextProvider, useCreateTweetStore } from './context';
 import { ImagesGridPreview } from './ImagesGridPreview';
 import { Poll } from './Poll';
 import { Actions } from './Actions';
@@ -10,12 +7,14 @@ import { VideoPreview } from './VideoPreview';
 import { Icon } from '../../../components';
 import { formatDate } from '../../../utils';
 import clsx from 'clsx';
+import { GifPreview } from './GifPreview';
 
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
 	const text = useCreateTweetStore(state => state.text);
 	const setText = useCreateTweetStore(state => state.setText);
 	const scheduled = useCreateTweetStore(state => state.scheduled);
+
 	const setIsScheduleModalOpen = useCreateTweetStore(
 		state => state.setIsScheduleModalOpen
 	);
@@ -53,6 +52,7 @@ const CreateTweet = () => {
 				</div>
 			)}
 			{attachment === 'VIDEO' && <VideoPreview />}
+			{attachment === 'GIF' && <GifPreview />}
 
 			<Actions />
 		</form>

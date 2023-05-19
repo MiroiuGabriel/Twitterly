@@ -1,184 +1,45 @@
-import { useEffect, useState } from 'react';
-import {
-	IconButton,
-	InfiniteScroll,
-	Modal,
-	SearchInput,
-	Spinner,
-	Switch,
-	Tooltip,
-} from '../../../components';
+import { useState } from 'react';
+import { IconButton, Modal, SearchInput, Tooltip } from '../../../components';
 import { Image } from './Image';
-import { client } from '../../../axiosConfig';
-import useSWRInfinite from 'swr/infinite';
-import { Fetcher } from 'swr';
-import { useDebounce, useLocalStorage } from 'usehooks-ts';
 
-const fallbackColors = [
-	'#ff7a00',
-	'#00ba7c',
-	'#1d9bf0',
-	'#7856ff',
-	'#f91880',
-	'#ffd400',
-];
+import { useDebounce, useLocalStorage } from 'usehooks-ts';
+import { GifsFeed } from './GifsFeed';
+import { useCreateTweetStore } from './context';
+import clsx from 'clsx';
 
 type GifModalProps = {
 	disabled: boolean;
 };
 
-const LIMIT = 50;
-
-type GifMedia = {
-	id: string;
-	width: number | string;
-	height: number | string;
-	still_image: string;
-	gif: string;
-};
-
-type GifProps = {
-	media: Omit<GifMedia, 'id'>;
-	isPlaying: boolean;
-};
-
-const gifFetcher: Fetcher<GifMedia[], string> = async key =>
-	fetch(key)
-		.then(res => res.json())
-		.then(response => {
-			// if (response.data.pagination.total_count === 0)
-			// 	throw new Error('No data found');
-			return response.data.map((data: any) => {
-				console.log(response);
-				const still_image = data.images.downsized_still;
-				const gif = data.images.downsized;
-				const id = data.id;
-
-				return {
-					id,
-					width: still_image.width,
-					height: still_image.height,
-					still_image: still_image.url,
-					gif: gif.url,
-				};
-			});
-		});
-
-const Gif: React.FC<GifProps> = ({ isPlaying, media }) => {
-	return (
-		<div
-			style={{
-				backgroundColor:
-					fallbackColors[
-						Math.floor(Math.random() * fallbackColors.length)
-					],
-				backgroundImage: `url(${
-					isPlaying ? media.gif : media.still_image
-				})`,
-			}}
-			className="flex bg-center bg-no-repeat bg-cover relative"
-		>
-			<img
-				src={isPlaying ? media.gif : media.still_image}
-				className="w-full h-full opacity-0 -z-10"
-			/>
-		</div>
-	);
-};
-
-type GifFeed = {
-	searchText: string;
-	isPlaying: boolean;
-	toggleIsPlaying: (checked: boolean) => void;
-};
-
-const GifsFeed: React.FC<GifFeed> = ({
-	searchText,
-	isPlaying,
-	toggleIsPlaying,
-}) => {
-	const swr = useSWRInfinite(
-		(index, prev) => {
-			return `https://api.giphy.com/v1/gifs/search?api_key=3Ye28d1sj5rJwslNb7JC4VmjA8FYMdBJ&q=${searchText}&limit=${LIMIT}&offset=${
-				LIMIT * (index + 1)
-			}&rating=g&lang=en`;
-		},
-		{
-			fetcher: gifFetcher,
-		}
-	);
-
-	return (
-		<>
-			<div className="flex justify-between px-4 my-3 items-center">
-				<p className="text-[#71767b]">Auto-play GIFs</p>
-				<Switch checked={isPlaying} onCheckedChange={toggleIsPlaying} />
-			</div>
-			<div className="grid grid-cols-[repeat(3,1fr)] gap-0.5 mt-1 rounded-bl-2xl m-0.5">
-				<InfiniteScroll
-					swr={swr}
-					loadingIndicator={new Array(4).fill(
-						<div
-							style={{
-								backgroundColor:
-									fallbackColors[
-										Math.floor(
-											Math.random() *
-												fallbackColors.length
-										)
-									],
-							}}
-						/>
-					)}
-					isReachingEnd={swr =>
-						swr.data?.[0].length === 0 ||
-						(swr.data?.length === undefined
-							? true
-							: swr.data[swr.data.length - 1].length < LIMIT)
-					}
-				>
-					{response =>
-						response.map(media => (
-							<Gif
-								isPlaying={isPlaying}
-								key={media.id}
-								media={{
-									gif: media.gif,
-									height: media.height,
-									width: media.width,
-									still_image: media.still_image,
-								}}
-							/>
-						))
-					}
-				</InfiniteScroll>
-			</div>
-		</>
-	);
-};
-
 export const GifModal: React.FC<GifModalProps> = ({ disabled }) => {
+	console.log('disabled', disabled);
 	const [text, setText] = useState('');
 	const [isPlaying, setIsPlaying] = useLocalStorage('gif-playing', false);
+
+	const isGifModalopen = useCreateTweetStore(state => state.isGifModalopen);
+	const setIsGifModalopen = useCreateTweetStore(
+		state => state.setIsGifModalopen
+	);
 
 	const debouncedText = useDebounce(text, 300);
 
 	return (
 		<Modal
+			open={isGifModalopen}
+			onOpenChange={setIsGifModalopen}
 			trigger={
-				<div>
+				<div
+					className={clsx(
+						disabled && 'pointer-events-none opacity-50'
+					)}
+				>
 					<Tooltip message="GIF">
-						<IconButton
-							type="button"
-							name="uploadGIF"
-							disabled={disabled}
-							size="sm"
-						/>
+						<IconButton type="button" name="uploadGIF" size="sm" />
 					</Tooltip>
 				</div>
 			}
 		>
-			<div className="fixed top-[5%] left-1/2 -translate-x-1/2 bg-black max-w-[600px] rounded-2xl max-h-[650px] h-full overflow-y-scroll">
+			<div className="fixed top-0 sm:top-[5%] left-1/2 -translate-x-1/2 bg-black w-full sm:max-w-[600px] sm:rounded-2xl sm:max-h-[650px] h-full overflow-y-auto">
 				<div className="px-4 pt-2 flex items-center sticky top-0 z-10 bg-[#000000a6] backdrop-blur-md">
 					{text ? (
 						<Tooltip message="Back">

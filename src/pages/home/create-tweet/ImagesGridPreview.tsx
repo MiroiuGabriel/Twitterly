@@ -1,4 +1,4 @@
-import { useCreateTweetStore } from '../../../context';
+import { useCreateTweetStore } from './context';
 import { Image, ImageProps } from './Image';
 import { RemoveImageCallback, RemoveButton } from './RemoveButton';
 
@@ -15,12 +15,8 @@ const RemovableImage: React.FC<
 export const ImagesGridPreview = () => {
 	const images = useCreateTweetStore(state => state.images);
 	const removeImage = useCreateTweetStore(state => state.removeImage);
-	const setAttachment = useCreateTweetStore(state => state.setAttachment);
 
-	const onRemove = (id: string) => {
-		if (images.length === 1) setAttachment('NONE');
-		removeImage(id);
-	};
+	const onRemove = (id: string) => removeImage(id);
 
 	if (images.length === 1)
 		return (

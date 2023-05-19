@@ -5,7 +5,7 @@ import {
 	EmojiPicker,
 	Modal,
 } from '../../../components';
-import { useCreateTweetStore } from '../../../context';
+import { useCreateTweetStore } from './context';
 import { useImageOrVideoUpload } from '../../../hooks';
 import { GifModal } from './GifModal';
 import { ScheduleModal } from './ScheduleModal';
@@ -13,21 +13,19 @@ import { ScheduleModal } from './ScheduleModal';
 export const Actions = () => {
 	const video = useCreateTweetStore(state => state.video);
 	const setText = useCreateTweetStore(state => state.setText);
+	const setAttachment = useCreateTweetStore(state => state.setAttachment);
 	const text = useCreateTweetStore(state => state.text);
 
 	const images = useCreateTweetStore(state => state.images);
 	const attachment = useCreateTweetStore(state => state.attachment);
-	const setAttachment = useCreateTweetStore(state => state.setAttachment);
 	const addImage = useCreateTweetStore(state => state.addImage);
 	const setVideo = useCreateTweetStore(state => state.setVideo);
 
 	const { onClick, onChange, ref } = useImageOrVideoUpload(
 		src => {
-			setAttachment('IMAGE');
 			addImage(src);
 		},
 		src => {
-			setAttachment('VIDEO');
 			setVideo(src);
 		}
 	);

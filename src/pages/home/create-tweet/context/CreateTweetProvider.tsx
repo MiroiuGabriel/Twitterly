@@ -1,6 +1,7 @@
 import { createContext, useContext, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore, createStore } from 'zustand';
+import { GifMedia } from '../GifsFeed';
 
 type Attachment = 'POLL' | 'GIF' | 'IMAGE' | 'VIDEO' | 'NONE';
 type Choice = 'choice1' | 'choice2' | 'choice3' | 'choice4';
@@ -15,7 +16,7 @@ type CreateTweet = {
 	text: string;
 	images: Image[];
 	video: string;
-	gif: string;
+	gif: GifMedia | null;
 	choices: number;
 	choice1: string;
 	choice2: string;
@@ -27,7 +28,10 @@ type CreateTweet = {
 	scheduled: Date | null;
 	setScheduled: (date: Date | null) => void;
 	isScheduleModalOpen: boolean;
+	isGifModalopen: boolean;
 	setIsScheduleModalOpen: (open: boolean) => void;
+	setIsGifModalopen: (open: boolean) => void;
+	setGif: (gif: GifMedia | null) => void;
 	setText: (text: string) => void;
 	addImage: (src: string) => void;
 	removeImage: (id: string) => void;
@@ -46,7 +50,7 @@ export const createTweetStore = () =>
 		text: '',
 		images: [],
 		video: '',
-		gif: '',
+		gif: null,
 		choices: 2,
 		choice1: '',
 		choice2: '',
@@ -57,20 +61,27 @@ export const createTweetStore = () =>
 		minutes: 0,
 		scheduled: null,
 		isScheduleModalOpen: false,
+		isGifModalopen: false,
+		setIsGifModalopen: open => set({ isGifModalopen: open }),
 		setScheduled: date => set({ scheduled: date }),
 
 		setIsScheduleModalOpen: open => {
 			set({ isScheduleModalOpen: open });
 		},
+		setGif: gif => set({ gif, attachment: gif ? 'GIF' : 'NONE' }),
 		addImage: src =>
 			set(state => ({
 				images: [...state.images, { id: uuidv4(), src }],
+				attachment: 'IMAGE',
 			})),
-		removeImage: id =>
-			set(state => ({
-				images: state.images.filter(image => image.id !== id),
-			})),
-		setVideo: src => set({ video: src }),
+		removeImage: id => {
+			const newImages = get().images.filter(image => image.id !== id);
+			set({
+				images: newImages,
+				attachment: newImages.length === 0 ? 'NONE' : 'IMAGE',
+			});
+		},
+		setVideo: src => set({ video: src, attachment: 'VIDEO' }),
 		setText: text => set({ text }),
 		setAttachment: attachment => set({ attachment }),
 		addChoice: () =>

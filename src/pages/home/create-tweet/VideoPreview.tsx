@@ -1,4 +1,4 @@
-import { useCreateTweetStore } from '../../../context';
+import { useCreateTweetStore } from './context';
 import { RemoveButton } from './RemoveButton';
 import { VideoPlayer } from '../../../components';
 
@@ -8,8 +8,8 @@ export const VideoPreview = () => {
 	const setVideo = useCreateTweetStore(state => state.setVideo);
 
 	const onRemove = () => {
-		setAttachment('NONE');
 		setVideo('');
+		setAttachment('NONE');
 	};
 
 	return (

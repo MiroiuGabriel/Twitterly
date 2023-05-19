@@ -3,7 +3,7 @@ import {
 	Select,
 	InputWithCharacterLimit,
 } from '../../../components/';
-import { useCreateTweetStore } from '../../../context';
+import { useCreateTweetStore } from './context';
 
 const daysRange = Array.from(new Array(8)).map((_, index) => index);
 const hoursRange = Array.from(new Array(24)).map((_, index) => index);

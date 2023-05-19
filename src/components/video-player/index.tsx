@@ -30,6 +30,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
 		isFullscreen,
 		wrapperRef,
 		setIsDragging,
+		toggleVolume,
 	} = useVideoControls();
 
 	const playingState = isPlaying ? 'pause' : 'play';
@@ -99,6 +100,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
 									<div>
 										<IconButton
 											name={audioState}
+											onClick={toggleVolume}
 											className="fill-white"
 											size="md"
 											type="button"

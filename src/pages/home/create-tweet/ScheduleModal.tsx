@@ -8,7 +8,7 @@ import {
 	isToday,
 } from '../../../utils';
 import { Form } from 'react-router-dom';
-import { useCreateTweetStore } from '../../../context';
+import { useCreateTweetStore } from './context';
 
 const today = new Date(Date.now());
 
@@ -101,7 +101,7 @@ export const ScheduleModal = () => {
 				</div>
 			}
 		>
-			<div className="fixed top-[5%] left-1/2 -translate-x-1/2 bg-black min-w-[600px] rounded-2xl">
+			<div className="fixed top-0 sm:top-[5%] left-1/2 -translate-x-1/2 bg-black w-full h-full sm:h-fit sm:max-w-[600px] sm:rounded-2xl">
 				<form
 					className="px-4 py-3"
 					action="/schedule"

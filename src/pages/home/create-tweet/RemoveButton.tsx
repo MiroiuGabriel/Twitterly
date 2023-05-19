@@ -19,6 +19,7 @@ export const RemoveButton: React.FC<RemoveButtonProps> = ({
 				className
 			)}
 			onClick={onRemove}
+			type="button"
 			{...props}
 		>
 			<Icon name="close" className="h-[18px]" />
