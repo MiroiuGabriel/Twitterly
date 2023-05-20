@@ -1,3 +1,4 @@
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import TextareaAutosize from 'react-textarea-autosize';
 import { CreateTweetContextProvider, useCreateTweetStore } from './context';
 import { ImagesGridPreview } from './ImagesGridPreview';
@@ -8,6 +9,8 @@ import { Icon } from '../../../components';
 import { formatDate } from '../../../utils';
 import clsx from 'clsx';
 import { GifPreview } from './GifPreview';
+import { FormEvent, useRef } from 'react';
+import { tweetService } from '../../../services/tweetService';
 
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
@@ -22,8 +25,25 @@ const CreateTweet = () => {
 	const placeholder =
 		attachment === 'POLL' ? 'Ask a question...' : "What's happening?";
 
+	const ref = useRef<LoadingBarRef>(null);
+
+	const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
+		ev.preventDefault();
+		ref.current?.continuousStart();
+
+		await tweetService.sendTweet();
+
+		ref.current?.complete();
+	};
+
 	return (
-		<form className="flex flex-col relative">
+		<form className="flex flex-col" onSubmit={handleSubmit}>
+			<LoadingBar
+				color="#1d9bf0"
+				ref={ref}
+				height={3}
+				containerStyle={{ position: 'absolute' }}
+			/>
 			{scheduled && (
 				<div
 					className="mt-1 flex gap-3 mb-4 cursor-pointer group relative items-center"
@@ -53,7 +73,6 @@ const CreateTweet = () => {
 			)}
 			{attachment === 'VIDEO' && <VideoPreview />}
 			{attachment === 'GIF' && <GifPreview />}
-
 			<Actions />
 		</form>
 	);

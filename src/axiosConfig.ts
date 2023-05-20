@@ -12,6 +12,9 @@ export const routes = {
 		sendResetEmail: (email: string) => `/auth/reset?email=${email}`,
 		reset: (token: string) => `/auth/reset/${token}`,
 	},
+	tweet: {
+		postTweet: '/tweet',
+	},
 };
 
 export const client = axios.create({

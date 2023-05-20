@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useCreateTweetStore } from './context';
 import { Image } from './Image';
 import { RemoveButton } from './RemoveButton';
@@ -12,7 +11,11 @@ export const GifPreview = () => {
 
 	return (
 		<>
-			<Image src={isPlaying ? gif.gif : gif.still_image} onClick={toggle}>
+			<Image
+				src={isPlaying ? gif.gif : gif.still_image}
+				onClick={toggle}
+				className="cursor-pointer"
+			>
 				<RemoveButton onRemove={() => setGif(null)} />
 				{!isPlaying && (
 					<div className="absolute left-1/2  top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1d9bf0] flex items-center rounded-full p-1.5 w-fit h-fit justify-center border-4 border-white">

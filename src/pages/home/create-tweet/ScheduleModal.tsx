@@ -1,4 +1,4 @@
-import { FormEvent, FormEventHandler, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Icon, IconButton, Modal, Select, Tooltip } from '../../../components';
 import { DateInitial, Month, MonthsMap, useDate } from '../../../hooks';
 import {
@@ -7,7 +7,6 @@ import {
 	getTimezoneName,
 	isToday,
 } from '../../../utils';
-import { Form } from 'react-router-dom';
 import { useCreateTweetStore } from './context';
 
 const today = new Date(Date.now());
@@ -71,6 +70,9 @@ export const ScheduleModal = () => {
 	const parsedHour = meridian === 'AM' ? hours : 12 + hours;
 
 	const today = isToday(new Date(parsedDate));
+
+	const isSame =
+		scheduled && new Date(parsedDate).getTime() === scheduled.getTime();
 
 	const timeError =
 		today &&
@@ -138,7 +140,7 @@ export const ScheduleModal = () => {
 
 						<button
 							type="submit"
-							disabled={timeError || dateError}
+							disabled={isSame || timeError || dateError}
 							className="text-sm leading-4 text-[#0f1419] bg-[#eff3f4] hover:bg-[#d7dbdc] focus:bg-[#d7dbdc] transition-colors duration-200 ease-in-out font-bold h-[32px] px-4 ml-3 rounded-full disabled:bg-[#787a7a] disabled:pointer-events-none"
 						>
 							{scheduled ? 'Update' : 'Confirm'}

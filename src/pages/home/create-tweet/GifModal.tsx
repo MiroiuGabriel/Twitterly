@@ -12,7 +12,6 @@ type GifModalProps = {
 };
 
 export const GifModal: React.FC<GifModalProps> = ({ disabled }) => {
-	console.log('disabled', disabled);
 	const [text, setText] = useState('');
 	const [isPlaying, setIsPlaying] = useLocalStorage('gif-playing', false);
 

@@ -19,7 +19,7 @@ export const Home = () => {
 			middle={
 				<main className="max-w-[600px] w-full border-l border-r border-[#2f3336]">
 					<Header icon="sparkles" title="Home" />
-					<div className="border-b border-[#2f3336] py-1 px-4 grid grid-cols-[auto,1fr] gap-3">
+					<div className="border-b border-[#2f3336] py-1 px-4 grid grid-cols-[auto,1fr] gap-3 relative overflow-hidden">
 						<div className="mt-1">
 							<Link to="/profile" className="h-fit rounded-full">
 								<Avatar />
@@ -27,9 +27,9 @@ export const Home = () => {
 						</div>
 						<TweetCreator />
 					</div>
-					<Button onClick={async () => await authService.signOut()}>
+					{/* <Button onClick={async () => await authService.signOut()}>
 						SignOut
-					</Button>
+					</Button> */}
 				</main>
 			}
 		></Layout>

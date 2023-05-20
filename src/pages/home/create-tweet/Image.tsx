@@ -21,7 +21,7 @@ export const Image: React.FC<ImageProps> = ({
 			}}
 			onClick={onClick}
 			className={clsx(
-				'flex bg-center bg-no-repeat bg-cover rounded-2xl relative',
+				'flex bg-center bg-no-repeat bg-cover rounded-2xl relative select-none',
 				className
 			)}
 		>

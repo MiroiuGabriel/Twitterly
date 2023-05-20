@@ -18,7 +18,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		return (
 			<button
 				className={clsx(
-					'rounded-full border w-full no-underline h-[48px] font-bold disabled:opacity-50 disabled:cursor-default transition-colors duration-200 ease-in-out',
+					'rounded-full border w-full no-underline h-[48px] font-bold disabled:opacity-50 disabled:cursor-default transition duration-200 ease-in-out',
 					variants[variant],
 					className
 				)}

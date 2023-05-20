@@ -9,13 +9,19 @@ type Choice = 'choice1' | 'choice2' | 'choice3' | 'choice4';
 type Image = {
 	id: string;
 	src: string;
+	file: File;
 };
+
+type Video = {
+	src: string;
+	file: File;
+} | null;
 
 type CreateTweet = {
 	attachment: Attachment;
 	text: string;
 	images: Image[];
-	video: string;
+	video: Video;
 	gif: GifMedia | null;
 	choices: number;
 	choice1: string;
@@ -33,9 +39,9 @@ type CreateTweet = {
 	setIsGifModalopen: (open: boolean) => void;
 	setGif: (gif: GifMedia | null) => void;
 	setText: (text: string) => void;
-	addImage: (src: string) => void;
+	addImage: (src: string, file: File) => void;
 	removeImage: (id: string) => void;
-	setVideo: (src: string) => void;
+	setVideo: (video: Video) => void;
 	setAttachment: (attachment: Attachment) => void;
 	addChoice: () => void;
 	setChoice: (choice: Choice, value: string) => void;
@@ -49,7 +55,7 @@ export const createTweetStore = () =>
 		attachment: 'NONE',
 		text: '',
 		images: [],
-		video: '',
+		video: null,
 		gif: null,
 		choices: 2,
 		choice1: '',
@@ -64,14 +70,13 @@ export const createTweetStore = () =>
 		isGifModalopen: false,
 		setIsGifModalopen: open => set({ isGifModalopen: open }),
 		setScheduled: date => set({ scheduled: date }),
-
 		setIsScheduleModalOpen: open => {
 			set({ isScheduleModalOpen: open });
 		},
 		setGif: gif => set({ gif, attachment: gif ? 'GIF' : 'NONE' }),
-		addImage: src =>
+		addImage: (src, file) =>
 			set(state => ({
-				images: [...state.images, { id: uuidv4(), src }],
+				images: [...state.images, { id: uuidv4(), src, file }],
 				attachment: 'IMAGE',
 			})),
 		removeImage: id => {
@@ -81,7 +86,11 @@ export const createTweetStore = () =>
 				attachment: newImages.length === 0 ? 'NONE' : 'IMAGE',
 			});
 		},
-		setVideo: src => set({ video: src, attachment: 'VIDEO' }),
+		setVideo: video =>
+			set({
+				video,
+				attachment: 'VIDEO',
+			}),
 		setText: text => set({ text }),
 		setAttachment: attachment => set({ attachment }),
 		addChoice: () =>

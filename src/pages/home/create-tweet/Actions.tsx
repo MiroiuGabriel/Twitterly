@@ -22,11 +22,11 @@ export const Actions = () => {
 	const setVideo = useCreateTweetStore(state => state.setVideo);
 
 	const { onClick, onChange, ref } = useImageOrVideoUpload(
-		src => {
-			addImage(src);
+		(src, file) => {
+			addImage(src, file);
 		},
-		src => {
-			setVideo(src);
+		(src, file) => {
+			setVideo({ src, file });
 		}
 	);
 
@@ -40,7 +40,7 @@ export const Actions = () => {
 		attachment === 'GIF' ||
 		attachment === 'POLL' ||
 		images.length === 4 ||
-		Boolean(video.length);
+		Boolean(video);
 
 	return (
 		<div className="mt-3 mb-1 flex justify-between -ml-2">
@@ -84,7 +84,11 @@ export const Actions = () => {
 				</EmojiPicker>
 				<ScheduleModal />
 			</div>
-			<Button type="submit" className="!w-[80px] !h-9" disabled>
+			<Button
+				type="submit"
+				className="!w-[80px] !h-9"
+				disabled={Boolean(!text.length)}
+			>
 				Tweet
 			</Button>
 		</div>

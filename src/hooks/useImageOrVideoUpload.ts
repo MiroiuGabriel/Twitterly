@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 
 export const useImageOrVideoUpload = (
-	onImageUpload: (src: string) => void,
-	onVideoUpload: (src: string) => void
+	onImageUpload: (src: string, file: File) => void,
+	onVideoUpload: (src: string, file: File) => void
 ) => {
 	const fileUploadInputRef = useRef<HTMLInputElement>(null);
 
@@ -14,9 +14,9 @@ export const useImageOrVideoUpload = (
 		for (const file of files) {
 			const src = URL.createObjectURL(file);
 			if (file.type.includes('image')) {
-				onImageUpload(src);
+				onImageUpload(src, file);
 			} else {
-				onVideoUpload(src);
+				onVideoUpload(src, file);
 			}
 		}
 	};
