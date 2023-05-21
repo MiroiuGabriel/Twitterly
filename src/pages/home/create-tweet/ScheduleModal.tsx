@@ -87,6 +87,7 @@ export const ScheduleModal = () => {
 
 	const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
+		ev.stopPropagation();
 		setIsScheduleModalOpen(false);
 		setScheduled(new Date(parsedDate));
 	};

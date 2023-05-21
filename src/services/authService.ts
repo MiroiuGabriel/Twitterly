@@ -19,6 +19,7 @@ export type User = {
 	handle: string;
 	profilePictureUrl: string;
 	dateOfBirth: Date;
+	fullName?: string;
 	country: {
 		code: string;
 		name: string;

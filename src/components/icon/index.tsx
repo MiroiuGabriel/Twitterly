@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { ExplicitIconProps, IconMapping, Size } from '../../icons';
 
 const sizes: Record<Size, string> = {
+	xxs: 'h-3',
 	xs: 'h-4',
 	sm: 'h-5',
 	md: 'h-6',

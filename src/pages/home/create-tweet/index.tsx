@@ -15,8 +15,19 @@ import { tweetService } from '../../../services/tweetService';
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
 	const text = useCreateTweetStore(state => state.text);
+	const gif = useCreateTweetStore(state => state.gif);
+	const images = useCreateTweetStore(state => state.images);
+	const choice1 = useCreateTweetStore(state => state.choice1);
+	const choice2 = useCreateTweetStore(state => state.choice2);
+	const choice3 = useCreateTweetStore(state => state.choice3);
+	const choice4 = useCreateTweetStore(state => state.choice4);
+	const hours = useCreateTweetStore(state => state.hours);
+	const days = useCreateTweetStore(state => state.days);
+	const minutes = useCreateTweetStore(state => state.minutes);
+	const video = useCreateTweetStore(state => state.video);
 	const setText = useCreateTweetStore(state => state.setText);
 	const scheduled = useCreateTweetStore(state => state.scheduled);
+	const clearCreator = useCreateTweetStore(state => state.clearCreator);
 
 	const setIsScheduleModalOpen = useCreateTweetStore(
 		state => state.setIsScheduleModalOpen
@@ -31,9 +42,35 @@ const CreateTweet = () => {
 		ev.preventDefault();
 		ref.current?.continuousStart();
 
-		await tweetService.sendTweet();
+		await tweetService.sendTweet({
+			attachment,
+			gif,
+			images,
+			poll: {
+				choice1,
+				choice2,
+				endDate: new Date(
+					Date.now() +
+						days * 24 * 60 * 60 * 1000 +
+						hours * 60 * 60 * 1000 +
+						minutes * 60 * 1000
+				),
+				choice3,
+				choice4,
+				statistics: {
+					choice1: 0,
+					choice2: 0,
+					choice3: 0,
+					choice4: 0,
+				},
+			},
+			scheduled,
+			text,
+			video,
+		});
 
 		ref.current?.complete();
+		clearCreator();
 	};
 
 	return (

@@ -10,6 +10,20 @@ export default {
 			...defaultTheme.screens,
 		},
 		extend: {
+			keyframes: {
+				heart: {
+					'0%': { backgroundPosition: 'left' },
+					'100%': { backgroundPosition: 'right' },
+				},
+				resize: {
+					'0%': { transform: 'scale(0.8)' },
+					'100%': { transform: 'scale(1)' },
+				},
+			},
+			animation: {
+				heart: 'heart 0.8s steps(28) forwards',
+				resize: 'resize 0.1s ease-in-out forwards',
+			},
 			backgroundImage: {
 				landing:
 					"url('https://abs.twimg.com/sticky/illustrations/lohp_1302x955.png')",

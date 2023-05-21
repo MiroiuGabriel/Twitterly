@@ -1,11 +1,10 @@
-import { Avatar, Button, Link, Slider } from '../../components';
-import { VideoPlayer } from '../../components/video-player';
+import { Avatar, Link } from '../../components';
 import { IconType } from '../../icons';
-import { authService } from '../../services';
 import { Layout } from '../shared';
 import { Sidebar } from '../shared/sidebar';
 import { Header } from './Header';
 import { TweetCreator } from './create-tweet';
+import { Feed } from './Feed';
 
 export type HeaderProps = {
 	title: string;
@@ -27,9 +26,7 @@ export const Home = () => {
 						</div>
 						<TweetCreator />
 					</div>
-					{/* <Button onClick={async () => await authService.signOut()}>
-						SignOut
-					</Button> */}
+					<Feed />
 				</main>
 			}
 		></Layout>

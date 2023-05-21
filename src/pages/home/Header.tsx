@@ -10,7 +10,7 @@ export const Header: React.FC<HeaderProps> = ({ title, icon }) => {
 		});
 
 	return (
-		<div className="h-[53px] px-4 flex justify-between items-center border-b border-[#2f3336] sticky top-0 bg-black">
+		<div className="h-[53px] px-4 flex justify-between items-center border-b border-[#2f3336] sticky top-0 bg-[#000000a6] backdrop-blur-md z-50">
 			<h1
 				className="font-black text-xl text-[#D9D9D9] cursor-pointer"
 				onClick={scrollToTop}

@@ -3,16 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { useStore, createStore } from 'zustand';
 import { GifMedia } from '../GifsFeed';
 
-type Attachment = 'POLL' | 'GIF' | 'IMAGE' | 'VIDEO' | 'NONE';
-type Choice = 'choice1' | 'choice2' | 'choice3' | 'choice4';
+export type Attachment = 'POLL' | 'GIF' | 'IMAGE' | 'VIDEO' | 'NONE';
+export type Choice = 'choice1' | 'choice2' | 'choice3' | 'choice4';
 
-type Image = {
+export type Image = {
 	id: string;
 	src: string;
 	file: File;
 };
 
-type Video = {
+export type Video = {
 	src: string;
 	file: File;
 } | null;
@@ -48,6 +48,7 @@ type CreateTweet = {
 	setMinutes: (minutes: number) => void;
 	setHours: (hours: number) => void;
 	setDays: (days: number) => void;
+	clearCreator: () => void;
 };
 
 export const createTweetStore = () =>
@@ -118,6 +119,23 @@ export const createTweetStore = () =>
 				hours,
 			})),
 		setMinutes: (minutes: number) => set({ minutes }),
+		clearCreator: () =>
+			set({
+				attachment: 'NONE',
+				text: '',
+				choice1: '',
+				choice2: '',
+				choice3: '',
+				choice4: '',
+				choices: 2,
+				days: 1,
+				hours: 0,
+				minutes: 0,
+				gif: null,
+				scheduled: null,
+				video: null,
+				images: [],
+			}),
 	}));
 
 type CreateTweetStore = ReturnType<typeof createTweetStore>;

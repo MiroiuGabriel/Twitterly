@@ -135,8 +135,8 @@ export const GifsFeed: React.FC<GifFeed> = ({
 					revalidateOnFocus={false}
 					revalidateOnReconnect={false}
 				>
-					{response =>
-						response.map(media => (
+					{gifs =>
+						gifs.map(media => (
 							<Gif
 								isPlaying={isPlaying}
 								key={media.id}

@@ -14,6 +14,7 @@ export const routes = {
 	},
 	tweet: {
 		postTweet: '/tweet',
+		profileTweets: '/tweet/profile',
 	},
 };
 

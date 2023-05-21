@@ -6,10 +6,11 @@ import { Icon } from '../icon';
 type IconButtonProps = {
 	name: IconType;
 	size?: Size;
+	iconClassName?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-	({ className, name, size = 'sm', ...props }, ref) => {
+	({ className, name, size = 'sm', iconClassName, ...props }, ref) => {
 		return (
 			<button
 				ref={ref}
@@ -19,7 +20,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 				)}
 				{...props}
 			>
-				<Icon name={name} size={size} />
+				<Icon name={name} size={size} className={iconClassName} />
 			</button>
 		);
 	}

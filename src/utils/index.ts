@@ -1,3 +1,5 @@
+import { MonthsMap } from '../hooks';
+
 export const mergeRefs = <T = any>(
 	refs: Array<React.MutableRefObject<T> | React.LegacyRef<T>>
 ): React.RefCallback<T> => {
@@ -90,4 +92,40 @@ export const isToday = (date: Date) => {
 		date.getMonth() == today.getMonth() &&
 		date.getFullYear() == today.getFullYear()
 	);
+};
+
+export const getReadableDate = (createdAt: Date) => {
+	const now = new Date();
+
+	const seconds = now.getSeconds() - createdAt.getSeconds();
+	const minutes = now.getMinutes() - createdAt.getMinutes();
+	const hours = now.getHours() - createdAt.getHours();
+	const days = now.getDate() - createdAt.getDate();
+	const months = now.getMonth() - createdAt.getMonth();
+	const years = now.getFullYear() - createdAt.getFullYear();
+
+	let year = '';
+	let month = '';
+	let day = '';
+
+	if (years > 0) {
+		year = `, ${createdAt.getFullYear()}`;
+	}
+
+	if (months > 0 || years > 0) {
+		month = `${MonthsMap[createdAt.getMonth()]} `;
+		day = createdAt.getDate().toString();
+	} else if (days > 0) {
+		day = `${days}d`;
+	} else if (hours > 0) {
+		day = `${hours}h`;
+	} else if (minutes > 0) {
+		day = `${minutes}m`;
+	} else if (seconds > 3) {
+		day = `${seconds}s`;
+	} else {
+		day = `Now`;
+	}
+
+	return `${month}${day}${year}`;
 };

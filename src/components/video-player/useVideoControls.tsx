@@ -3,6 +3,7 @@ import { formatDuration } from '../../utils';
 import { useEffectOnce, useLocalStorage } from 'usehooks-ts';
 
 export const useVideoControls = () => {
+	const [isDirty, setIsDirty] = useState(true);
 	const [duration, setDuration] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isFullscreen, setIsFullscreen] = useState(false);
@@ -36,9 +37,14 @@ export const useVideoControls = () => {
 			);
 	});
 
-	const play = () => {
+	const play = async () => {
+		if (!isDirty) setIsDirty(true);
 		ref.current!.volume = volume;
-		ref.current?.play();
+		ref.current?.play().catch(err => {
+			console.error(err);
+			ref.current?.pause();
+			setIsPlaying(false);
+		});
 		setIsPlaying(true);
 	};
 
@@ -123,5 +129,6 @@ export const useVideoControls = () => {
 		isFullscreen,
 		wrapperRef,
 		toggleVolume,
+		isDirty,
 	};
 };

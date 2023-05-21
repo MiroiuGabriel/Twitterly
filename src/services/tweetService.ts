@@ -1,48 +1,67 @@
 import { v4 as uuid } from 'uuid';
-import { createTweetStore } from '../pages/home/create-tweet/context';
 import { client, routes } from '../axiosConfig';
+import { Attachment, Image, Video } from '../pages/home/create-tweet/context';
+import { GifMedia } from '../pages/home/create-tweet/GifsFeed';
+import { User } from './authService';
+
+export type TweetData = {
+	text: string;
+	attachment: Attachment;
+	images: Image[];
+	video: Video | null;
+	gif: GifMedia | null;
+	scheduled: Date | null;
+	poll: PollAttachment;
+};
+
+export type ImagesAttachment = {
+	images: string[];
+};
+
+export type VideoAttachment = {
+	video: string;
+};
+
+export type GifAttachment = GifMedia;
+
+export type PollAttachment = {
+	endDate: Date;
+	choice1: string;
+	choice2: string;
+	choice3?: string;
+	choice4?: string;
+	statistics: {
+		choice1: number;
+		choice2: number;
+		choice3: number;
+		choice4: number;
+	};
+};
+
+export type Tweet = {
+	id: number;
+	text: string;
+	createdAt: string;
+	attachmentType: Attachment;
+	attachment: ImagesAttachment | VideoAttachment | GifAttachment | string;
+	user: User;
+};
 
 class TweetService {
-	public async sendTweet() {
-		const tweetStore = createTweetStore();
-
-		const {
-			attachment,
-			gif,
-			choice1,
-			choice2,
-			choice3,
-			choice4,
-			minutes,
-			hours,
-			days,
-			video,
-			images,
-			text,
-			scheduled,
-		} = tweetStore.getState();
+	public async sendTweet(tweetData: TweetData) {
+		const { attachment, text, gif, images, poll, scheduled, video } =
+			tweetData;
 
 		let attachmentValue: string = '{}';
 
 		const formData = new FormData();
 
 		formData.append('text', text);
-		formData.append('scheduled', JSON.stringify(scheduled));
+		formData.append('scheduled', JSON.stringify(scheduled?.getTime()));
+		formData.append('attachmentType', attachment);
 
 		if (attachment === 'GIF') attachmentValue = JSON.stringify(gif);
-		if (attachment === 'POLL')
-			attachmentValue = JSON.stringify({
-				ending: new Date(
-					Date.now() +
-						days * 24 * 60 * 60 * 1000 +
-						hours * 60 * 60 * 1000 +
-						minutes * 60 * 1000
-				),
-				choice1,
-				choice2,
-				choice3,
-				choice4,
-			});
+		if (attachment === 'POLL') attachmentValue = JSON.stringify(poll);
 
 		if (attachment === 'IMAGE') {
 			for (const image of images) {
@@ -54,30 +73,18 @@ class TweetService {
 			formData.append(uuid(), video!.file);
 		}
 
-		// handle rest on server
+		formData.append('attachment', attachmentValue);
 
-		console.log(attachmentValue, 'attachmentValue');
+		await client.postForm(routes.tweet.postTweet, formData);
+		//TOOD: handle exception
+	}
 
-		// await client.postForm(routes.tweet.postTweet, formData);
-
-		//clear store
-
-		createTweetStore().setState({
-			text: '',
-			choice1: '',
-			choice2: '',
-			choice3: '',
-			choice4: '',
-			choices: 2,
-			gif: null,
-			video: null,
-			images: [],
-			days: 1,
-			hours: 0,
-			minutes: 0,
-			attachment: 'NONE',
-			scheduled: null,
-		});
+	public async getProfileTweets(url: string) {
+		const { data } = await client.get<Tweet[]>(url);
+		return data.map(d => ({
+			...d,
+			attachment: JSON.parse(d.attachment as string),
+		}));
 	}
 }
 
