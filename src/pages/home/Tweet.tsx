@@ -1,4 +1,3 @@
-import { KeyedMutator } from 'swr';
 import { Avatar, IconButton, Link, Tooltip } from '../../components';
 import {
 	GifAttachment,
@@ -14,7 +13,9 @@ import { ImagePreview } from './ImagePreview';
 import { Like } from './Like';
 import { VideoPreview } from './VideoPreview';
 import { Poll } from './Poll';
-import { useTweet } from './Feed';
+import { useFeed } from './FeedContext';
+import { ShareDropdown } from './ShareDropdown';
+import { RetweetDropdown } from './RetweetDropdown';
 
 export const Tweet: React.FC<TweetProps> = props => {
 	const {
@@ -30,7 +31,7 @@ export const Tweet: React.FC<TweetProps> = props => {
 		isAuthor,
 	} = props;
 
-	const { mutate } = useTweet();
+	const { mutate } = useFeed();
 
 	return (
 		<article className="px-4 py-3 grid grid-cols-[auto,1fr] gap-3 border-[#2f3336] border-b">
@@ -93,17 +94,21 @@ export const Tweet: React.FC<TweetProps> = props => {
 							</span>
 						</div>
 					</Tooltip>
-					<Tooltip message="Retweet">
-						<div className="flex items-center text-sm text-[#71767b] hover:text-[#00ba7c]">
-							<IconButton
-								name="retweet"
-								className="hover:fill-[#00ba7c] fill-[#71767b]  focus:fill-[#00ba7c] peer hover:bg-[#00ba7c1a] focus:bg-[#00ba7c1a]"
-							/>
-							<span className="px-3 peer-focus:text-[#00ba7c]">
-								1
-							</span>
+					<RetweetDropdown>
+						<div>
+							<Tooltip message="Retweet">
+								<div className="flex items-center text-sm text-[#71767b] hover:text-[#00ba7c]">
+									<IconButton
+										name="retweet"
+										className="hover:fill-[#00ba7c] fill-[#71767b]  focus:fill-[#00ba7c] peer hover:bg-[#00ba7c1a] focus:bg-[#00ba7c1a]"
+									/>
+									<span className="px-3 peer-focus:text-[#00ba7c]">
+										1
+									</span>
+								</div>
+							</Tooltip>
 						</div>
-					</Tooltip>
+					</RetweetDropdown>
 					<Tooltip message="Like">
 						<div className="flex items-center text-sm text-[#71767b] hover:text-[#f91880]">
 							<Like
@@ -122,14 +127,18 @@ export const Tweet: React.FC<TweetProps> = props => {
 							</span>
 						</div>
 					</Tooltip>
-					<Tooltip message="Share">
-						<div className="flex items-center text-sm text-[#71767b] hover:text-[#1d9bf0]">
-							<IconButton
-								name="share"
-								className="hover:bg-[#1d9bf01a] focus:bg-[#1d9bf01a] fill-[#71767b] hover:fill-[#1d9bf0] focus:fill-[#1d9bf0] peer"
-							/>
+					<ShareDropdown link={window.location + `/tweet/${id}`}>
+						<div>
+							<Tooltip message="Share">
+								<div className="flex items-center text-sm text-[#71767b] hover:text-[#1d9bf0]">
+									<IconButton
+										name="share"
+										className="hover:bg-[#1d9bf01a] focus:bg-[#1d9bf01a] fill-[#71767b] hover:fill-[#1d9bf0] focus:fill-[#1d9bf0] peer"
+									/>
+								</div>
+							</Tooltip>
 						</div>
-					</Tooltip>
+					</ShareDropdown>
 				</div>
 			</div>
 		</article>

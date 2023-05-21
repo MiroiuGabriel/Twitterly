@@ -1,8 +1,10 @@
+import { SWRInfiniteKeyLoader } from 'swr/infinite';
 import { InfiniteScroll, Spinner, Switch } from '../../../components';
 import { useCreateTweetStore } from './context';
 import { gifFetcher } from './gifFetcher';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
+import useSWRInfinite from 'swr/infinite';
 
 export const fallbackColors = [
 	'#ff7a00',
@@ -71,6 +73,16 @@ export const GifsFeed: React.FC<GifFeed> = ({
 	isPlaying,
 	toggleIsPlaying,
 }) => {
+	const swr = useSWRInfinite(
+		(index, prev) =>
+			`https://api.giphy.com/v1/gifs/search?api_key=3Ye28d1sj5rJwslNb7JC4VmjA8FYMdBJ&q=${searchText}&limit=${LIMIT}&offset=${
+				LIMIT * index
+			}&rating=g&lang=en`,
+		{
+			fetcher: gifFetcher,
+		}
+	);
+
 	return (
 		<>
 			<div className="flex justify-between px-4 my-3 items-center">
@@ -79,12 +91,8 @@ export const GifsFeed: React.FC<GifFeed> = ({
 			</div>
 			<div className="grid grid-cols-[repeat(3,1fr)] gap-0.5 mt-1 rounded-bl-2xl m-0.5">
 				<InfiniteScroll
-					getKey={(index, prev) =>
-						`https://api.giphy.com/v1/gifs/search?api_key=3Ye28d1sj5rJwslNb7JC4VmjA8FYMdBJ&q=${searchText}&limit=${LIMIT}&offset=${
-							LIMIT * index
-						}&rating=g&lang=en`
-					}
-					fetcher={gifFetcher}
+					swr={swr}
+					limit={LIMIT}
 					loadingIndicator={
 						<div className="col-span-3 mx-auto mt-10">
 							<Spinner />
@@ -125,15 +133,7 @@ export const GifsFeed: React.FC<GifFeed> = ({
 							</p>
 						</div>
 					}
-					isReachingEnd={data =>
-						data !== undefined &&
-						data.filter(d => d.length !== 0).length !== 0 &&
-						data[data.length - 1].length < LIMIT
-					}
 					offset={-300}
-					revalidateIfStale={false}
-					revalidateOnFocus={false}
-					revalidateOnReconnect={false}
 				>
 					{gifs =>
 						gifs.map(media => (

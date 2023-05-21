@@ -9,8 +9,9 @@ import { Icon } from '../../../components';
 import { formatDate } from '../../../utils';
 import clsx from 'clsx';
 import { GifPreview } from './GifPreview';
-import { FormEvent, useRef } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { tweetService } from '../../../services/tweetService';
+import { useFeed } from '../FeedContext';
 
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
@@ -32,15 +33,19 @@ const CreateTweet = () => {
 	const setIsScheduleModalOpen = useCreateTweetStore(
 		state => state.setIsScheduleModalOpen
 	);
+	const ref = useRef<LoadingBarRef>(null);
+	const { mutate } = useFeed();
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const placeholder =
 		attachment === 'POLL' ? 'Ask a question...' : "What's happening?";
 
-	const ref = useRef<LoadingBarRef>(null);
-
 	const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 		ref.current?.continuousStart();
+		setIsSubmitting(true);
+
 		await tweetService.sendTweet({
 			attachment,
 			gif,
@@ -69,12 +74,18 @@ const CreateTweet = () => {
 			video,
 		});
 
+		mutate();
+
 		ref.current?.complete();
 		clearCreator();
+		setIsSubmitting(false);
 	};
 
 	return (
-		<form className="flex flex-col" onSubmit={handleSubmit}>
+		<form
+			className={clsx('flex flex-col', isSubmitting && 'animate-pulse')}
+			onSubmit={handleSubmit}
+		>
 			<LoadingBar
 				color="#1d9bf0"
 				ref={ref}
@@ -95,13 +106,15 @@ const CreateTweet = () => {
 			<TextareaAutosize
 				className={clsx(
 					'placeholder:text-[#6e767d] text-xl bg-black my-3 text-[#d9d9d9] resize-none outline-none focus:outline',
-					scheduled && 'my-0'
+					scheduled && 'my-0',
+					isSubmitting && 'my-4'
 				)}
 				placeholder={placeholder}
 				maxRows={20}
 				value={text}
 				onChange={event => setText(event.target.value)}
 			/>
+
 			{attachment === 'POLL' && <Poll />}
 			{attachment === 'IMAGE' && (
 				<div>
@@ -110,7 +123,7 @@ const CreateTweet = () => {
 			)}
 			{attachment === 'VIDEO' && <VideoPreview />}
 			{attachment === 'GIF' && <GifPreview />}
-			<Actions />
+			{<Actions />}
 		</form>
 	);
 };

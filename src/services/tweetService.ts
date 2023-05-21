@@ -3,6 +3,7 @@ import { client, routes } from '../axiosConfig';
 import { Attachment, Image, Video } from '../pages/home/create-tweet/context';
 import { GifMedia } from '../pages/home/create-tweet/GifsFeed';
 import { User } from './authService';
+import { Fetcher } from 'swr';
 
 export type TweetData = {
 	text: string;

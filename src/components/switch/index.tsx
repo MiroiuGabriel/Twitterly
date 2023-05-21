@@ -15,7 +15,7 @@ export const Switch: React.FC<RadixSwitch.SwitchProps> = ({
 				)}
 				{...props}
 			>
-				<RadixSwitch.Thumb className="block shadow-thumb w-5 h-5 rounded-full transition-transform duration-100 translate-x-0 will-change-transform data-[state=checked]:translate-x-[20px] data-[state=checked]:bg-[#1d9bf0] data-[state=unchecked]:bg-[#fafafa]" />
+				<RadixSwitch.Thumb className="block shadow-switch w-5 h-5 rounded-full transition-transform duration-100 translate-x-0 will-change-transform data-[state=checked]:translate-x-[20px] data-[state=checked]:bg-[#1d9bf0] data-[state=unchecked]:bg-[#fafafa]" />
 			</RadixSwitch.Root>
 		</div>
 	);

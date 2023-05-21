@@ -1,57 +1,46 @@
-import { useEffect } from 'react';
-import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
-import { Fetcher, KeyedMutator } from 'swr';
+import React, { useEffect } from 'react';
+import type { SWRInfiniteResponse } from 'swr/infinite';
 import { useIntersection } from './useIntersection';
 
 type InfiniteScrollProps<T> = {
-	children: (item: T[], mutate: KeyedMutator<T[][]>) => React.ReactNode;
+	swr: SWRInfiniteResponse<T>;
+	children: (item: T) => React.ReactNode;
 	loadingIndicator?: React.ReactNode;
 	emptyIndicator?: React.ReactNode;
 	endingIndicator?: React.ReactNode;
 	validatingIndicator?: React.ReactNode;
-	getKey: SWRInfiniteKeyLoader;
-	isReachingEnd: boolean | ((data: T[][] | undefined) => boolean);
+	isReachingEnd?: boolean | ((swr: T[] | undefined) => boolean);
 	offset?: number;
-	fetcher: Fetcher<T[], string>;
-	revalidateIfStale?: boolean;
-	revalidateOnFocus?: boolean;
-	revalidateOnReconnect?: boolean;
+	limit: number;
 };
 
-export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
+export const InfiniteScroll = <T,>(
+	props: InfiniteScrollProps<T>
+): React.ReactElement<InfiniteScrollProps<T>> => {
 	const {
+		swr,
+		swr: { setSize, data, isValidating, isLoading },
 		children,
 		loadingIndicator,
 		endingIndicator,
 		emptyIndicator,
 		validatingIndicator,
 		isReachingEnd,
-		getKey,
-		fetcher,
+		limit,
 		offset = 0,
-		revalidateIfStale = true,
-		revalidateOnFocus = true,
-		revalidateOnReconnect = true,
 	} = props;
-
-	const { data, isLoading, isValidating, setSize, mutate } = useSWRInfinite<
-		T[]
-	>(getKey, {
-		fetcher: fetcher,
-		revalidateIfStale: revalidateIfStale,
-		revalidateOnFocus: revalidateOnFocus,
-		revalidateOnReconnect: revalidateOnReconnect,
-	});
 
 	const [intersecting, ref] = useIntersection<HTMLDivElement>();
 
-	const ending =
-		typeof isReachingEnd === 'function'
-			? isReachingEnd(data)
-			: isReachingEnd;
+	const ending = !isReachingEnd
+		? data !== undefined &&
+		  data.filter(d => (d as T[]).length !== 0).length !== 0 &&
+		  (data[data.length - 1] as T[]).length < limit
+		: typeof isReachingEnd === 'function'
+		? isReachingEnd(swr.data)
+		: isReachingEnd;
 
-	const isEmpty = data?.[0]?.length === 0;
-
+	const isEmpty = (data?.[0] as T[] | undefined)?.length === 0;
 	const validating = !isEmpty && !isLoading && isValidating;
 
 	useEffect(() => {
@@ -62,11 +51,8 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 
 	return (
 		<>
-			<div className="text-red-500" onClick={() => mutate()}>
-				mutate
-			</div>
 			{typeof children === 'function'
-				? data?.map(item => children(item, mutate))
+				? data?.map(item => children(item))
 				: children}
 			<div style={{ position: 'relative' }}>
 				<div
@@ -81,3 +67,5 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 		</>
 	);
 };
+
+export default InfiniteScroll;

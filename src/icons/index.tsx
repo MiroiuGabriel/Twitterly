@@ -488,6 +488,51 @@ const Share: React.FC<IconProps> = ({ className, ...props }) => {
 	);
 };
 
+const Link: React.FC<IconProps> = ({ className, ...props }) => {
+	return (
+		<svg
+			viewBox="0 0 24 24"
+			aria-hidden="true"
+			className={className}
+			{...props}
+		>
+			<g>
+				<path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path>
+			</g>
+		</svg>
+	);
+};
+
+const BookmarkAdd: React.FC<IconProps> = ({ className, ...props }) => {
+	return (
+		<svg
+			viewBox="0 0 24 24"
+			aria-hidden="true"
+			className={className}
+			{...props}
+		>
+			<g>
+				<path d="M17 3V0h2v3h3v2h-3v3h-2V5h-3V3h3zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V11h2v11.94l-8-5.71-8 5.71V4.5C4 3.12 5.119 2 6.5 2h4.502v2H6.5z"></path>
+			</g>
+		</svg>
+	);
+};
+
+const Quote: React.FC<IconProps> = ({ className, ...props }) => {
+	return (
+		<svg
+			viewBox="0 0 24 24"
+			aria-hidden="true"
+			className={className}
+			{...props}
+		>
+			<g>
+				<path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L5 14.914V19h4.09L19.73 8.354c.2-.196.2-.512 0-.708l-3.38-3.378zM14.75 19l-2 2H21v-2h-6.25z"></path>
+			</g>
+		</svg>
+	);
+};
+
 export const IconMapping = {
 	twitter: Twitter,
 	arrowDown: ArrowDown,
@@ -529,4 +574,7 @@ export const IconMapping = {
 	heart: Heart,
 	share: Share,
 	heartFilled: HeartFilled,
+	link: Link,
+	bookmarkAdd: BookmarkAdd,
+	quote: Quote,
 };
