@@ -45,11 +45,6 @@ export const GifPreview: React.FC<GifPreviewProps> = ({ gif }) => {
 					</div>
 				</div>
 			</Image>
-			<div className="text-[#71767b] flex items-center gap-2 mt-1">
-				via{' '}
-				<img src="https://abs.twimg.com/a/1501527574/img/t1/icon_giphy.png" />
-				<span className="font-bold">GIPHY</span>
-			</div>
 			<div></div>
 		</div>
 	);

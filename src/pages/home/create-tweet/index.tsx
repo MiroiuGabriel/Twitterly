@@ -11,6 +11,9 @@ import clsx from 'clsx';
 import { GifPreview } from './GifPreview';
 import { FormEvent, useRef } from 'react';
 import { tweetService } from '../../../services/tweetService';
+import { mutate } from 'swr';
+import { feedGetKey } from '../Feed';
+import { unstable_serialize } from 'swr/infinite';
 
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
@@ -41,7 +44,6 @@ const CreateTweet = () => {
 	const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 		ref.current?.continuousStart();
-
 		await tweetService.sendTweet({
 			attachment,
 			gif,
@@ -63,11 +65,14 @@ const CreateTweet = () => {
 					choice3: 0,
 					choice4: 0,
 				},
+				votes: [],
 			},
 			scheduled,
 			text,
 			video,
 		});
+
+		mutate(unstable_serialize(feedGetKey));
 
 		ref.current?.complete();
 		clearCreator();

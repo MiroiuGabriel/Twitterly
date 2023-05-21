@@ -11,7 +11,7 @@ export type TweetData = {
 	video: Video | null;
 	gif: GifMedia | null;
 	scheduled: Date | null;
-	poll: PollAttachment;
+	poll: PollAttachment & { votes: [] };
 };
 
 export type ImagesAttachment = {
@@ -45,6 +45,9 @@ export type Tweet = {
 	attachmentType: Attachment;
 	attachment: ImagesAttachment | VideoAttachment | GifAttachment | string;
 	user: User;
+	likes: number;
+	isLiked: boolean;
+	hasVoted?: boolean;
 };
 
 class TweetService {
@@ -85,6 +88,17 @@ class TweetService {
 			...d,
 			attachment: JSON.parse(d.attachment as string),
 		}));
+	}
+
+	public async like(tweetId: number) {
+		await client.post(routes.tweet.like(tweetId));
+	}
+	public async unlike(tweetId: number) {
+		await client.post(routes.tweet.unlike(tweetId));
+	}
+
+	public async vote(tweetId: number, choiceName: string) {
+		await client.post(routes.tweet.vote(tweetId, choiceName));
 	}
 }
 

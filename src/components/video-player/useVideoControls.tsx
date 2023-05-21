@@ -1,4 +1,10 @@
-import { SyntheticEvent, useRef, useState, KeyboardEvent } from 'react';
+import {
+	SyntheticEvent,
+	useRef,
+	useState,
+	KeyboardEvent,
+	useEffect,
+} from 'react';
 import { formatDuration } from '../../utils';
 import { useEffectOnce, useLocalStorage } from 'usehooks-ts';
 
@@ -38,9 +44,10 @@ export const useVideoControls = () => {
 	});
 
 	const play = async () => {
-		if (!isDirty) setIsDirty(true);
+		if (isDirty) setIsDirty(false);
 		ref.current!.volume = volume;
 		ref.current?.play().catch(err => {
+			setIsDirty(true);
 			console.error(err);
 			ref.current?.pause();
 			setIsPlaying(false);

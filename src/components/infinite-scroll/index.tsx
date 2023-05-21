@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
-import { Fetcher } from 'swr';
+import { Fetcher, unstable_serialize } from 'swr';
 import { useIntersection } from './useIntersection';
 
 type InfiniteScrollProps<T> = {
@@ -34,15 +34,14 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 		revalidateOnReconnect = true,
 	} = props;
 
-	const { data, isLoading, isValidating, setSize } = useSWRInfinite<T[]>(
-		getKey,
-		{
-			fetcher: fetcher,
-			revalidateIfStale: revalidateIfStale,
-			revalidateOnFocus: revalidateOnFocus,
-			revalidateOnReconnect: revalidateOnReconnect,
-		}
-	);
+	const { data, isLoading, isValidating, setSize, mutate } = useSWRInfinite<
+		T[]
+	>(getKey, {
+		fetcher: fetcher,
+		revalidateIfStale: revalidateIfStale,
+		revalidateOnFocus: revalidateOnFocus,
+		revalidateOnReconnect: revalidateOnReconnect,
+	});
 
 	const [intersecting, ref] = useIntersection<HTMLDivElement>();
 
@@ -63,6 +62,9 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 
 	return (
 		<>
+			<div className="text-red-500" onClick={() => mutate()}>
+				mutate
+			</div>
 			{typeof children === 'function'
 				? data?.map(item => children(item))
 				: children}

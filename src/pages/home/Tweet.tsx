@@ -1,24 +1,37 @@
+import { mutate } from 'swr';
 import { Avatar, IconButton, Link, Tooltip } from '../../components';
 import {
 	GifAttachment,
 	ImagesAttachment,
+	PollAttachment,
 	Tweet as TweetProps,
 	VideoAttachment,
+	tweetService,
 } from '../../services/tweetService';
 import { getReadableDate } from '../../utils';
 import { GifPreview } from './GifPreview';
 import { ImagePreview } from './ImagePreview';
-import { Like } from './LikeProps';
+import { Like } from './Like';
 import { VideoPreview } from './VideoPreview';
+import { unstable_serialize } from 'swr/infinite';
+import { feedGetKey } from './Feed';
+import { Poll } from './Poll';
 
-export const Tweet: React.FC<TweetProps> = ({
-	attachment,
-	attachmentType,
-	createdAt,
-	id,
-	text,
-	user,
-}) => {
+export const Tweet: React.FC<TweetProps> = props => {
+	const {
+		attachment,
+		attachmentType,
+		createdAt,
+		id,
+		text,
+		user,
+		likes,
+		isLiked,
+		hasVoted,
+	} = props;
+
+	console.log(props);
+
 	return (
 		<article className="px-4 py-3 grid grid-cols-[auto,1fr] gap-3 border-[#2f3336] border-b">
 			<div>
@@ -39,6 +52,7 @@ export const Tweet: React.FC<TweetProps> = ({
 				</div>
 				<pre className="text-[#e7e9ea] !text-[15px] leading-5 !font-chirp">
 					{text}
+					{id}
 				</pre>
 				{attachmentType === 'IMAGE' && (
 					<div className="mt-3">
@@ -54,6 +68,13 @@ export const Tweet: React.FC<TweetProps> = ({
 				)}
 				{attachmentType === 'GIF' && (
 					<GifPreview gif={attachment as GifAttachment} />
+				)}
+				{attachmentType === 'POLL' && (
+					<Poll
+						poll={attachment as unknown as PollAttachment}
+						id={id}
+						hasVoted={hasVoted!}
+					/>
 				)}
 				<div className="max-w-[425px] w-full flex justify-between mt-3">
 					<Tooltip message="Comment">
@@ -80,9 +101,19 @@ export const Tweet: React.FC<TweetProps> = ({
 					</Tooltip>
 					<Tooltip message="Like">
 						<div className="flex items-center text-sm text-[#71767b] hover:text-[#f91880]">
-							<Like />
+							<Like
+								onLike={async () => {
+									await tweetService.like(id);
+									mutate(unstable_serialize(feedGetKey));
+								}}
+								onUnlike={async () => {
+									await tweetService.unlike(id);
+									mutate(unstable_serialize(feedGetKey));
+								}}
+								liked={isLiked}
+							/>
 							<span className="px-3 peer-focus:text-[#f91880]">
-								1
+								{likes}
 							</span>
 						</div>
 					</Tooltip>

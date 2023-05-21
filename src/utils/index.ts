@@ -129,3 +129,6 @@ export const getReadableDate = (createdAt: Date) => {
 
 	return `${month}${day}${year}`;
 };
+
+export const formatPollPercentage = (percentage: string) =>
+	percentage === 'Infinity' ? '0' : percentage;

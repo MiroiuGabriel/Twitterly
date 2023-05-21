@@ -11,6 +11,8 @@ export const VideoPreview: React.FC<{ video: string }> = ({ video }) => {
 		amount: 0.9,
 	});
 
+	console.log(inView);
+
 	useEffect(() => {
 		if (inView) controlsRef.current?.play();
 		else controlsRef.current?.pause();
@@ -19,11 +21,20 @@ export const VideoPreview: React.FC<{ video: string }> = ({ video }) => {
 	return (
 		<div ref={ref} className="relative">
 			{!inView && (
-				<div className="absolute left-1/2  top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1d9bf0] flex items-center rounded-full p-1.5 w-fit h-fit justify-center border-4 border-white">
+				<div className="mt-[6px] absolute left-1/2  top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1d9bf0] flex items-center rounded-full p-1.5 w-fit h-fit justify-center border-4 border-white z-10">
 					<Icon name="play" className="fill-white" size="xs" />
 				</div>
 			)}
-			<VideoPlayer src={video} className="mt-3" ref={controlsRef} />
+			<VideoPlayer
+				src={video}
+				className="mt-3"
+				ref={controlsRef}
+				dirtyIndicator={
+					<div className="absolute left-1/2  top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1d9bf0] flex items-center rounded-full p-1.5 w-fit h-fit justify-center border-4 border-white">
+						<Icon name="play" className="fill-white" size="xs" />
+					</div>
+				}
+			/>
 		</div>
 	);
 };

@@ -15,6 +15,10 @@ export const routes = {
 	tweet: {
 		postTweet: '/tweet',
 		profileTweets: '/tweet/profile',
+		like: (id: number) => `/tweet/like/${id}`,
+		unlike: (id: number) => `/tweet/unlike/${id}`,
+		vote: (id: number, choice: string) =>
+			`/tweet/vote?id=${id}&choice=${choice}`,
 	},
 };
 

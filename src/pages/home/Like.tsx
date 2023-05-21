@@ -2,12 +2,12 @@ import { IconButton } from '../../components';
 import { useEffect, useState } from 'react';
 
 type LikeProps = {
-	onLike?: () => void;
-	onUnlike?: () => void;
-	liked?: boolean;
+	onLike: () => void;
+	onUnlike: () => void;
+	liked: boolean;
 };
 
-export const Like: React.FC<LikeProps> = () => {
+export const Like: React.FC<LikeProps> = ({ liked, onLike, onUnlike }) => {
 	const [state, setState] = useState('initial');
 
 	useEffect(() => {
@@ -20,9 +20,12 @@ export const Like: React.FC<LikeProps> = () => {
 
 	return (
 		<>
-			{state === 'initial' ? (
+			{!liked && state === 'initial' ? (
 				<IconButton
-					onClick={() => setState('liking')}
+					onClick={() => {
+						setState('liking');
+						onLike();
+					}}
 					name="heart"
 					className="fill-[#71767b] hover:fill-[#f91880] focus:fill-[#f91880] peer hover:bg-[#f918801a] focus:bg-[#f918801a]"
 				/>
@@ -41,7 +44,10 @@ export const Like: React.FC<LikeProps> = () => {
 				</div>
 			) : (
 				<IconButton
-					onClick={() => setState('initial')}
+					onClick={() => {
+						setState('initial');
+						onUnlike();
+					}}
 					name="heartFilled"
 					className="fill-[#f91880] peer hover:bg-[#f918801a] focus:bg-[#f918801a]"
 					iconClassName="animate-resize"
