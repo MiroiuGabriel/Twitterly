@@ -130,5 +130,11 @@ export const getReadableDate = (createdAt: Date) => {
 	return `${month}${day}${year}`;
 };
 
-export const formatPollPercentage = (percentage: string) =>
-	percentage === 'Infinity' ? '0' : percentage;
+export const formatPollPercentage = (percentage: number) =>
+	Number.isNaN(percentage) || percentage === Infinity
+		? '0'
+		: isFloat(percentage)
+		? percentage.toFixed(1)
+		: percentage.toString();
+
+export const isFloat = (num: number) => Math.floor(num) !== Math.ceil(num);

@@ -11,9 +11,6 @@ import clsx from 'clsx';
 import { GifPreview } from './GifPreview';
 import { FormEvent, useRef } from 'react';
 import { tweetService } from '../../../services/tweetService';
-import { mutate } from 'swr';
-import { feedGetKey } from '../Feed';
-import { unstable_serialize } from 'swr/infinite';
 
 const CreateTweet = () => {
 	const attachment = useCreateTweetStore(state => state.attachment);
@@ -71,8 +68,6 @@ const CreateTweet = () => {
 			text,
 			video,
 		});
-
-		mutate(unstable_serialize(feedGetKey));
 
 		ref.current?.complete();
 		clearCreator();

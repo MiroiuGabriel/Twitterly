@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
-import { Fetcher, unstable_serialize } from 'swr';
+import { Fetcher, KeyedMutator } from 'swr';
 import { useIntersection } from './useIntersection';
 
 type InfiniteScrollProps<T> = {
-	children: (item: T[]) => React.ReactNode;
+	children: (item: T[], mutate: KeyedMutator<T[][]>) => React.ReactNode;
 	loadingIndicator?: React.ReactNode;
 	emptyIndicator?: React.ReactNode;
 	endingIndicator?: React.ReactNode;
@@ -66,7 +66,7 @@ export const InfiniteScroll = <T,>(props: InfiniteScrollProps<T>) => {
 				mutate
 			</div>
 			{typeof children === 'function'
-				? data?.map(item => children(item))
+				? data?.map(item => children(item, mutate))
 				: children}
 			<div style={{ position: 'relative' }}>
 				<div

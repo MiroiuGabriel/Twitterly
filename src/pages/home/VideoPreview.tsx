@@ -11,8 +11,6 @@ export const VideoPreview: React.FC<{ video: string }> = ({ video }) => {
 		amount: 0.9,
 	});
 
-	console.log(inView);
-
 	useEffect(() => {
 		if (inView) controlsRef.current?.play();
 		else controlsRef.current?.pause();

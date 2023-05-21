@@ -48,6 +48,7 @@ export type Tweet = {
 	likes: number;
 	isLiked: boolean;
 	hasVoted?: boolean;
+	isAuthor?: boolean;
 };
 
 class TweetService {

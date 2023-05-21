@@ -1,4 +1,4 @@
-import { mutate } from 'swr';
+import { KeyedMutator } from 'swr';
 import { Avatar, IconButton, Link, Tooltip } from '../../components';
 import {
 	GifAttachment,
@@ -13,9 +13,8 @@ import { GifPreview } from './GifPreview';
 import { ImagePreview } from './ImagePreview';
 import { Like } from './Like';
 import { VideoPreview } from './VideoPreview';
-import { unstable_serialize } from 'swr/infinite';
-import { feedGetKey } from './Feed';
 import { Poll } from './Poll';
+import { useTweet } from './Feed';
 
 export const Tweet: React.FC<TweetProps> = props => {
 	const {
@@ -28,9 +27,10 @@ export const Tweet: React.FC<TweetProps> = props => {
 		likes,
 		isLiked,
 		hasVoted,
+		isAuthor,
 	} = props;
 
-	console.log(props);
+	const { mutate } = useTweet();
 
 	return (
 		<article className="px-4 py-3 grid grid-cols-[auto,1fr] gap-3 border-[#2f3336] border-b">
@@ -74,6 +74,11 @@ export const Tweet: React.FC<TweetProps> = props => {
 						poll={attachment as unknown as PollAttachment}
 						id={id}
 						hasVoted={hasVoted!}
+						isAuthor={isAuthor}
+						onVote={async (name: string) => {
+							await tweetService.vote(id, name);
+							mutate();
+						}}
 					/>
 				)}
 				<div className="max-w-[425px] w-full flex justify-between mt-3">
@@ -104,15 +109,15 @@ export const Tweet: React.FC<TweetProps> = props => {
 							<Like
 								onLike={async () => {
 									await tweetService.like(id);
-									mutate(unstable_serialize(feedGetKey));
+									mutate();
 								}}
 								onUnlike={async () => {
 									await tweetService.unlike(id);
-									mutate(unstable_serialize(feedGetKey));
+									mutate();
 								}}
 								liked={isLiked}
 							/>
-							<span className="px-3 peer-focus:text-[#f91880]">
+							<span className="px-3 peer-focus:text-[#f91880] w-1">
 								{likes}
 							</span>
 						</div>
@@ -123,9 +128,6 @@ export const Tweet: React.FC<TweetProps> = props => {
 								name="share"
 								className="hover:bg-[#1d9bf01a] focus:bg-[#1d9bf01a] fill-[#71767b] hover:fill-[#1d9bf0] focus:fill-[#1d9bf0] peer"
 							/>
-							<span className="px-3 peer-focus:text-[#1d9bf0]">
-								1
-							</span>
 						</div>
 					</Tooltip>
 				</div>
