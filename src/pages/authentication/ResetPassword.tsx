@@ -11,10 +11,15 @@ export const ResetPassword = () => {
 
 	return (
 		<AuthLayout title="Reset your password" error={error}>
-			<Input placeholder="Enter your new password" name="password" />
+			<Input
+				placeholder="Enter your new password"
+				name="password"
+				type="password"
+			/>
 			<Input
 				placeholder="Enter your password one more time"
 				name="confirmPassword"
+				type="password"
 			/>
 			<Button disabled={isSubmitting}>Reset Password</Button>
 		</AuthLayout>
